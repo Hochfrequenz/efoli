@@ -23,7 +23,7 @@
   - that derive the `EdifactFormatVersion` from a given date(time) (e.g. `2024-01-01`➡`FV2310`)
 
 It's not much, but we need it at many places.
-This is why we need a central place to define these formats and versions.
+This is why we use this package as a central place to define these formats and versions.
 
 ## Installation
 ```bash
