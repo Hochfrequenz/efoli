@@ -42,3 +42,7 @@ def test_format_version_from_keydate(key_date: datetime, expected_result: Edifac
 def test_get_current_format_version() -> None:
     actual = get_current_edifact_format_version()
     assert isinstance(actual, EdifactFormatVersion) is True
+
+
+def test_str_representation() -> None:
+    assert str(EdifactFormatVersion.FV2504) == "FV2504"

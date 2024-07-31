@@ -44,3 +44,7 @@ def test_pruefi_to_format_not_mapped_exception(pruefi: str) -> None:
         _ = get_format_of_pruefidentifikator(pruefi)
 
     assert "No Edifact format was found for pruefidentifikator" in excinfo.value.args[0]
+
+
+def test_str_representation() -> None:
+    assert str(EdifactFormat.UTILMD) == "UTILMD"
