@@ -1,7 +1,8 @@
 """contains the EdifactFormatVersion enum"""
 
 import datetime
-from enum import StrEnum
+
+from .strenum import StrEnum
 
 
 class EdifactFormatVersion(StrEnum):

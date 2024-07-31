@@ -3,7 +3,8 @@ contains the EdifactFormat enum and helper methods
 """
 
 import re
-from enum import StrEnum
+
+from .strenum import StrEnum
 
 _PRUEFI_REGEX = r"^[1-9]\d{4}$"
 pruefidentifikator_pattern = re.compile(_PRUEFI_REGEX)
