@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-dependencies = []     # add all the dependencies here
+dependencies = ["pytz"]     # add all the dependencies here
 dynamic = ["readme", "version"]
 
 [project.urls]

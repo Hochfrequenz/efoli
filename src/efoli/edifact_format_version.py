@@ -1,8 +1,13 @@
 """contains the EdifactFormatVersion enum"""
 
 import datetime
+from typing import Union
+
+import pytz
 
 from .strenum import StrEnum
+
+_berlin = pytz.timezone("Europe/Berlin")
 
 
 class EdifactFormatVersion(StrEnum):
@@ -25,7 +30,7 @@ class EdifactFormatVersion(StrEnum):
         return self.value
 
 
-def get_edifact_format_version(key_date: datetime.datetime) -> EdifactFormatVersion:
+def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]) -> EdifactFormatVersion:
     """
     Retrieves the appropriate Edifact format version applicable for the given key date.
 
@@ -36,6 +41,8 @@ def get_edifact_format_version(key_date: datetime.datetime) -> EdifactFormatVers
     :param key_date: The date for which the Edifact format version is to be determined.
     :return: The Edifact format version valid for the specified key date.
     """
+    if not isinstance(key_date, datetime.datetime) and isinstance(key_date, datetime.date):
+        key_date = _berlin.localize(datetime.datetime.combine(key_date, datetime.time(0, 0, 0, 0)))
     format_version_thresholds = [
         (datetime.datetime(2021, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2104),
         (datetime.datetime(2022, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2110),

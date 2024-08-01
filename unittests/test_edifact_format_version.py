@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -11,7 +11,12 @@ from efoli import EdifactFormatVersion, get_current_edifact_format_version, get_
         pytest.param(
             datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
             EdifactFormatVersion.FV2104,
-            id="Anything before 2021-04-01",
+            id="Anything before 2021-04-01 (datetime)",
+        ),
+        pytest.param(
+            date(2021, 1, 1),
+            EdifactFormatVersion.FV2104,
+            id="Anything before 2021-04-01 (date)",
         ),
         pytest.param(datetime(2021, 5, 1, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2104),
         pytest.param(datetime(2021, 10, 1, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2110),
@@ -28,6 +33,8 @@ from efoli import EdifactFormatVersion, get_current_edifact_format_version, get_
         pytest.param(datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2410),
         pytest.param(datetime(2025, 3, 31, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2410),
         pytest.param(datetime(2025, 4, 3, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2504),
+        pytest.param(date(2025, 4, 3), EdifactFormatVersion.FV2410),
+        pytest.param(date(2025, 4, 4), EdifactFormatVersion.FV2504),
         pytest.param(datetime(2025, 9, 30, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2510),
         pytest.param(
             datetime(2050, 10, 1, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2510
