@@ -1,6 +1,7 @@
 """contains the EdifactFormatVersion enum"""
 
 import datetime
+from typing import Union
 
 import pytz
 
@@ -29,7 +30,7 @@ class EdifactFormatVersion(StrEnum):
         return self.value
 
 
-def get_edifact_format_version(key_date: datetime.datetime | datetime.date) -> EdifactFormatVersion:
+def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]) -> EdifactFormatVersion:
     """
     Retrieves the appropriate Edifact format version applicable for the given key date.
 
