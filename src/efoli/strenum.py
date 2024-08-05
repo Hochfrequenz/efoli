@@ -4,6 +4,7 @@ a wrapper around StrEnum which is only available since python 3.11
 
 import sys
 from enum import Enum
+from typing import TYPE_CHECKING
 
 if sys.version_info.major == 3 and sys.version_info.minor >= 11:
     from enum import StrEnum
@@ -25,3 +26,6 @@ else:
 
 
 __all__ = ["StrEnum"]
+if TYPE_CHECKING:
+    if sys.version_info < (3, 11):
+        from enum import Enum as StrEnum
