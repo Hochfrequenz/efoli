@@ -6,7 +6,7 @@ import sys
 from typing import TYPE_CHECKING
 
 if sys.version_info.major == 3 and sys.version_info.minor >= 11:
-    from enum import StrEnum
+    from enum import StrEnum  # pylint:disable=no-name-in-module # 3.9 won't run into here anyway
 
     # We have to use the builtin / std lib enum.StrEnum in Python >= 3.11, because the behaviour of (str,Enum) changed:
     # class Foo(str, Enum):
