@@ -3,10 +3,10 @@ a wrapper around StrEnum which is only available since python 3.11
 """
 
 import sys
-from enum import Enum
+from typing import TYPE_CHECKING
 
 if sys.version_info.major == 3 and sys.version_info.minor >= 11:
-    from enum import StrEnum
+    from enum import StrEnum  # pylint:disable=no-name-in-module # 3.9 won't run into here anyway
 
     # We have to use the builtin / std lib enum.StrEnum in Python >= 3.11, because the behaviour of (str,Enum) changed:
     # class Foo(str, Enum):
@@ -14,6 +14,7 @@ if sys.version_info.major == 3 and sys.version_info.minor >= 11:
     # f"{a_str_enum_member}" results in "MEMBER" for Python < v3.11 but "Foo.MEMBER" in Python >= v3.11
     # Using the old (str, Enum) in Python 3.11 causes errors e.g. in the ExpressionBuilders.
 else:
+    from enum import Enum
 
     class StrEnum(str, Enum):  # type:ignore[no-redef]
         """
@@ -25,3 +26,5 @@ else:
 
 
 __all__ = ["StrEnum"]
+if TYPE_CHECKING and sys.version_info < (3, 11):
+    from enum import Enum as StrEnum
