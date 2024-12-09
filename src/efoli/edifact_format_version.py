@@ -22,7 +22,7 @@ class EdifactFormatVersion(StrEnum):
     FV2310 = "FV2310"  #: valid from 2023-10-01 onwards
     FV2404 = "FV2404"  #: valid from 2024-04-01 onwards
     FV2410 = "FV2410"  #: valid from 2024-10-01 onwards
-    FV2504 = "FV2504"  #: valid from 2025-04-04 onwards
+    FV2504 = "FV2504"  #: valid from 2025-06-06 onwards (was originally planned for 2025-04-04)
     FV2510 = "FV2510"  #: valid from 2025-10-01 onwards
     # whenever you add another value here, please also make sure to add its key date to get_edifact_format_version below
 
@@ -50,7 +50,7 @@ def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]
         (datetime.datetime(2023, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2304),
         (datetime.datetime(2024, 4, 2, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2310),
         (datetime.datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2404),
-        (datetime.datetime(2025, 4, 3, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2410),
+        (datetime.datetime(2025, 6, 5, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2410),
         (datetime.datetime(2025, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2504),
     ]
 
