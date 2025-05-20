@@ -11,8 +11,9 @@ from efoli import EdifactFormat, get_format_of_pruefidentifikator
         pytest.param("11042", EdifactFormat.UTILMD),
         ("13002", EdifactFormat.MSCONS),
         ("25001", EdifactFormat.UTILTS),
-        ("44001", EdifactFormat.UTILMD),
-        ("55001", EdifactFormat.UTILMD),
+        ("11001", EdifactFormat.UTILMD),
+        ("44001", EdifactFormat.UTILMDG),
+        ("55001", EdifactFormat.UTILMDS),
     ],
 )
 def test_pruefi_to_format(pruefi: str, expected: EdifactFormat) -> None:
