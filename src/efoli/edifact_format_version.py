@@ -44,19 +44,19 @@ def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]
     """
     if not isinstance(key_date, datetime.datetime) and isinstance(key_date, datetime.date):
         key_date = _berlin.localize(datetime.datetime.combine(key_date, datetime.time(0, 0, 0, 0)))
-    format_version_thresholds: list[tuple[datetime.datetime, EdifactFormatVersion]] = (
-        [  # maps the exclusive upper threshold to the version valid until that threshold
-            (datetime.datetime(2021, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2104),
-            (datetime.datetime(2022, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2110),
-            (datetime.datetime(2023, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2210),
-            (datetime.datetime(2023, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2304),
-            (datetime.datetime(2024, 4, 2, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2310),
-            (datetime.datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2404),
-            (datetime.datetime(2025, 6, 5, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2410),
-            (datetime.datetime(2025, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2504),
-            (datetime.datetime(2026, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2510),
-        ]
-    )
+    format_version_thresholds: list[
+        tuple[datetime.datetime, EdifactFormatVersion]
+    ] = [  # maps the exclusive upper threshold to the version valid until that threshold
+        (datetime.datetime(2021, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2104),
+        (datetime.datetime(2022, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2110),
+        (datetime.datetime(2023, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2210),
+        (datetime.datetime(2023, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2304),
+        (datetime.datetime(2024, 4, 2, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2310),
+        (datetime.datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2404),
+        (datetime.datetime(2025, 6, 5, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2410),
+        (datetime.datetime(2025, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2504),
+        (datetime.datetime(2026, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2510),
+    ]
 
     for threshold_date, version in format_version_thresholds:
         if key_date < threshold_date:
