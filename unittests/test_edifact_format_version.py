@@ -41,8 +41,9 @@ from efoli import EdifactFormatVersion, get_current_edifact_format_version, get_
         pytest.param(datetime(2025, 10, 1, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2510),
         pytest.param(datetime(2026, 3, 31, 21, 59, 59, tzinfo=timezone.utc), EdifactFormatVersion.FV2510),
         pytest.param(datetime(2026, 3, 31, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2604),
+        pytest.param(datetime(2026, 9, 30, 22, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2610),
         pytest.param(
-            datetime(2050, 10, 1, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2604
+            datetime(2050, 10, 1, 0, 0, 0, tzinfo=timezone.utc), EdifactFormatVersion.FV2610
         ),  # or what ever is the latest version
     ],
 )
