@@ -64,7 +64,7 @@ def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]
         if key_date < threshold_date:
             return version
 
-    return EdifactFormatVersion.FV2604
+    return EdifactFormatVersion.FV2610
 
 
 def get_current_edifact_format_version() -> EdifactFormatVersion:
