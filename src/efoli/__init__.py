@@ -3,7 +3,12 @@ efoli contains enums and related helper functions for EDIFACT formats and format
 """
 
 from .edifact_format import EdifactFormat, get_format_of_pruefidentifikator
-from .edifact_format_version import EdifactFormatVersion, get_current_edifact_format_version, get_edifact_format_version
+from .edifact_format_version import (
+    EdifactFormatVersion,
+    get_current_edifact_format_version,
+    get_edifact_format_version,
+    get_edifact_format_version_valid_from,
+)
 
 __all__ = [
     "EdifactFormat",
@@ -11,4 +16,5 @@ __all__ = [
     "EdifactFormatVersion",
     "get_current_edifact_format_version",
     "get_edifact_format_version",
+    "get_edifact_format_version_valid_from",
 ]
