@@ -50,21 +50,29 @@ _format_version_thresholds: list[tuple[datetime.datetime, EdifactFormatVersion]]
 
 
 def _build_valid_from_map() -> dict[EdifactFormatVersion, datetime.date]:
-    """Derive start dates from the thresholds list.
+    """Derive inclusive start dates from the thresholds list.
 
     Each threshold is the exclusive upper bound of a version — meaning the NEXT version
-    starts at that threshold. Converting to Europe/Berlin gives the local start date.
+    starts at that threshold. Converting to Europe/Berlin gives the local inclusive start date.
     """
+    # Ensure thresholds are sorted by datetime (guard against accidental reordering)
+    sorted_thresholds = sorted(_format_version_thresholds, key=lambda t: t[0])
     result: dict[EdifactFormatVersion, datetime.date] = {}
-    versions_in_order = [v for _, v in _format_version_thresholds]
+    versions_in_order = [v for _, v in sorted_thresholds]
     # For each threshold at index i, the version at index i+1 starts at that threshold
-    for i, (threshold_dt, _) in enumerate(_format_version_thresholds):
+    for i, (threshold_dt, _) in enumerate(sorted_thresholds):
         if i + 1 < len(versions_in_order):
             next_version = versions_in_order[i + 1]
             result[next_version] = threshold_dt.astimezone(_berlin).date()
-    # Last version in thresholds list: its end threshold is the start of the fallback version (FV2610)
-    last_threshold = _format_version_thresholds[-1][0]
-    result[EdifactFormatVersion.FV2610] = last_threshold.astimezone(_berlin).date()
+    # Last version in thresholds list: its end threshold is the start of the fallback version
+    last_threshold = sorted_thresholds[-1][0]
+    last_version_in_thresholds = sorted_thresholds[-1][1]
+    # The fallback version is the one AFTER the last in the thresholds list
+    all_fvs = list(EdifactFormatVersion)
+    last_idx = all_fvs.index(last_version_in_thresholds)
+    if last_idx + 1 < len(all_fvs):
+        fallback_version = all_fvs[last_idx + 1]
+        result[fallback_version] = last_threshold.astimezone(_berlin).date()
     return result
 
 

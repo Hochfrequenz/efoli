@@ -89,3 +89,16 @@ def test_format_version_valid_from(version: EdifactFormatVersion, expected_date:
 def test_format_version_valid_from_unknown_raises() -> None:
     with pytest.raises(KeyError):
         get_edifact_format_version_valid_from(EdifactFormatVersion.FV2104)
+
+
+def test_all_format_versions_except_first_have_valid_from() -> None:
+    """Every FV except the very first (FV2104) must have a known start date.
+    This test fails if a new FV is added to the enum but not to the thresholds list."""
+    all_fvs = list(EdifactFormatVersion)
+    first_fv = all_fvs[0]
+    for fv in all_fvs[1:]:
+        result = get_edifact_format_version_valid_from(fv)
+        assert isinstance(result, date), f"{fv} should have a valid_from date"
+    # First FV has no start date
+    with pytest.raises(KeyError):
+        get_edifact_format_version_valid_from(first_fv)
