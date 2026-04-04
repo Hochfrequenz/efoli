@@ -8,6 +8,7 @@ import pytz
 from .strenum import StrEnum
 
 _berlin = pytz.timezone("Europe/Berlin")
+_utc = datetime.timezone.utc
 
 
 class EdifactFormatVersion(StrEnum):
@@ -32,6 +33,68 @@ class EdifactFormatVersion(StrEnum):
         return self.value
 
 
+# Maps the exclusive upper threshold (UTC) to the version valid until that threshold.
+# When adding a new FV, append a new entry here AND update the fallback in get_edifact_format_version.
+_format_version_thresholds: list[tuple[datetime.datetime, EdifactFormatVersion]] = [
+    (datetime.datetime(2021, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2104),
+    (datetime.datetime(2022, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2110),
+    (datetime.datetime(2023, 3, 31, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2210),
+    (datetime.datetime(2023, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2304),
+    (datetime.datetime(2024, 4, 2, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2310),
+    (datetime.datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2404),
+    (datetime.datetime(2025, 6, 5, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2410),
+    (datetime.datetime(2025, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2504),
+    (datetime.datetime(2026, 3, 31, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2510),
+    (datetime.datetime(2026, 9, 30, 22, 0, 0, 0, tzinfo=_utc), EdifactFormatVersion.FV2604),
+]
+
+
+def _build_valid_from_map() -> dict[EdifactFormatVersion, datetime.date]:
+    """Derive inclusive start dates from the thresholds list.
+
+    Each threshold is the exclusive upper bound of a version — meaning the NEXT version
+    starts at that threshold. Converting to Europe/Berlin gives the local inclusive start date.
+    """
+    # Ensure thresholds are sorted by datetime (guard against accidental reordering)
+    sorted_thresholds = sorted(_format_version_thresholds, key=lambda t: t[0])
+    result: dict[EdifactFormatVersion, datetime.date] = {}
+    versions_in_order = [v for _, v in sorted_thresholds]
+    # For each threshold at index i, the version at index i+1 starts at that threshold
+    for i, (threshold_dt, _) in enumerate(sorted_thresholds):
+        if i + 1 < len(versions_in_order):
+            next_version = versions_in_order[i + 1]
+            result[next_version] = threshold_dt.astimezone(_berlin).date()
+    # Last version in thresholds list: its end threshold is the start of the fallback version
+    last_threshold = sorted_thresholds[-1][0]
+    last_version_in_thresholds = sorted_thresholds[-1][1]
+    # The fallback version is the one AFTER the last in the thresholds list
+    all_fvs = list(EdifactFormatVersion)
+    last_idx = all_fvs.index(last_version_in_thresholds)
+    if last_idx + 1 < len(all_fvs):
+        fallback_version = all_fvs[last_idx + 1]
+        result[fallback_version] = last_threshold.astimezone(_berlin).date()
+    return result
+
+
+_valid_from_map = _build_valid_from_map()
+
+
+def get_edifact_format_version_valid_from(version: EdifactFormatVersion) -> datetime.date:
+    """
+    Returns the date from which a format version is valid (in Europe/Berlin timezone).
+
+    :param version: The format version to look up.
+    :return: The first day on which this format version is active.
+    :raises KeyError: If the start date is not known (only FV2104, the earliest version).
+    """
+    if version not in _valid_from_map:
+        raise KeyError(
+            f"Start date for {version} is not known. "
+            f"Known versions: {', '.join(str(v) for v in sorted(_valid_from_map.keys(), key=lambda x: x.value))}"
+        )
+    return _valid_from_map[version]
+
+
 def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]) -> EdifactFormatVersion:
     """
     Retrieves the appropriate Edifact format version applicable for the given key date.
@@ -45,22 +108,8 @@ def get_edifact_format_version(key_date: Union[datetime.datetime, datetime.date]
     """
     if not isinstance(key_date, datetime.datetime) and isinstance(key_date, datetime.date):
         key_date = _berlin.localize(datetime.datetime.combine(key_date, datetime.time(0, 0, 0, 0)))
-    format_version_thresholds: list[tuple[datetime.datetime, EdifactFormatVersion]] = (
-        [  # maps the exclusive upper threshold to the version valid until that threshold
-            (datetime.datetime(2021, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2104),
-            (datetime.datetime(2022, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2110),
-            (datetime.datetime(2023, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2210),
-            (datetime.datetime(2023, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2304),
-            (datetime.datetime(2024, 4, 2, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2310),
-            (datetime.datetime(2024, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2404),
-            (datetime.datetime(2025, 6, 5, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2410),
-            (datetime.datetime(2025, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2504),
-            (datetime.datetime(2026, 3, 31, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2510),
-            (datetime.datetime(2026, 9, 30, 22, 0, 0, 0, tzinfo=datetime.timezone.utc), EdifactFormatVersion.FV2604),
-        ]
-    )
 
-    for threshold_date, version in format_version_thresholds:
+    for threshold_date, version in _format_version_thresholds:
         if key_date < threshold_date:
             return version
 
